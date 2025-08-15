@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Journey Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-container {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: popupSlideIn 0.4s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .popup-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .popup-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid #764ba2;
+        }
+
+        .popup-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-subtitle {
+            font-size: 16px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        .popup-content {
+            padding: 40px 30px;
+        }
+
+        .quiz-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+            accent-color: #667eea;
+        }
+
+        .radio-text {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        .input-field {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .learn-more-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .learn-more-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .learn-more-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        @media (max-width: 600px) {
+            .popup-container {
+                width: 95%;
+                margin: 10px;
+            }
+            
+            .popup-header {
+                padding: 20px;
+            }
+            
+            .popup-title {
+                font-size: 24px;
+            }
+            
+            .popup-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-container">
+            <button class="close-btn" onclick="closePopup()">&times;</button>
+            
+            <div class="popup-header">
+                <h1 class="popup-title">TAKE THE QUICK QUIZ</h1>
+                <p class="popup-subtitle">
+                    Welcome to your crypto adventure! Whether you're just starting out or already experienced, 
+                    we're here to help you grow. Share where you are in your journey so we can offer the right support for you.
+                </p>
+            </div>
+            
+            <div class="popup-content">
+                <form class="quiz-form" id="cryptoQuizForm">
+                    <div class="form-group">
+                        <label class="form-label">Where are you in your crypto journey?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="thinking" required>
+                                <span class="radio-text">
+                                    <strong>Thinking about it</strong> - everyone else is birthing themselves into the crypto and blockchain, maybe I need to
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="newborn" required>
+                                <span class="radio-text">
+                                    <strong>Newborn stage</strong> - everything is new, needs constant guidance and sleepless learning nights
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="toddler" required>
+                                <span class="radio-text">
+                                    <strong>Toddler phase</strong> - taking first wobbly steps, curious but need hand-holding
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="school-age" required>
+                                <span class="radio-text">
+                                    <strong>School age</strong> - asking lots of questions, eager to learn and growing fast
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="teenager" required>
+                                <span class="radio-text">
+                                    <strong>Teenager years</strong> - more independent, making some decisions but still need mentoring
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="young-adult" required>
+                                <span class="radio-text">
+                                    <strong>Young adult</strong> - confident, educated, and ready to make my own wise financial choices
+                                </span>
+                            </label>
+                            
+                            <label class="radio-option">
+                                <input type="radio" name="cryptoStage" value="wise-woman" required>
+                                <span class="radio-text">
+                                    <strong>Wise Woman</strong> - I'm looking for opportunities to expand my portfolio
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userName">Name</label>
+                        <input type="text" id="userName" name="name" class="input-field" required placeholder="Your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userEmail">Email</label>
+                        <input type="email" id="userEmail" name="email" class="input-field" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="referral">Who introduced you to this site? (We'd love to thank them!)</label>
+                        <input type="text" id="referral" name="referral" class="input-field" placeholder="Friend's name, social media, search engine, etc. (optional)">
+                    </div>
+                    
+                    <button type="submit" class="learn-more-btn">Learn More</button>
+                    
+                    <div class="form-footer">
+                        We respect your privacy and will never spam you. 
+                        You can unsubscribe at any time.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submission handler
+        document.getElementById('cryptoQuizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Here's where you'll integrate with your nowsite/royaltie email marketing system
+            console.log('Quiz data:', data);
+            
+            // Example integration with your email marketing system
+            // Replace this with your actual API endpoint
+            submitToEmailMarketing(data);
+        });
+
+        function submitToEmailMarketing(data) {
+            // Replace with your actual nowsite/royaltie API endpoint
+            const apiEndpoint = '/api/email-marketing/subscribe'; // Update this URL
+            
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: data.email,
+                    name: data.name,
+                    cryptoStage: data.cryptoStage,
+                    referralSource: data.referral || 'Not specified',
+                    source: 'crypto-quiz-popup',
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+                // Show success message
+                alert('Thanks for taking the quiz! Check your email for personalized crypto guidance.');
+                closePopup();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Oops! Something went wrong. Please try again.');
+            });
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('popupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Auto-show popup after page loads (remove this if you want manual trigger)
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('popupOverlay').style.display = 'flex';
+            }, 1000); // Show popup after 1 second
+        });
+    </script>
+</body>
+</html>
