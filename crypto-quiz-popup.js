@@ -199,7 +199,7 @@
                     <h1 class="quiz-popup-title">TAKE THE QUICK QUIZ</h1>
                     <p class="quiz-popup-subtitle">
                         Welcome to your crypto adventure! Whether you're just starting out or already experienced, 
-                        we're here to help you grow. Share where you are in your journey so we can offer the right support for you.
+                        we're here to help you grow. Take this quick quiz and we'll send you tips on how to get to the next stage.
                     </p>
                 </div>
                 
